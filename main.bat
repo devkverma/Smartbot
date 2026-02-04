@@ -1,3 +1,4 @@
 @echo off
-cmd /c python tst.py
+call venv\Scripts\activate.bat
+python main.py
 exit

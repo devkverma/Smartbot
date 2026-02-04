@@ -38,13 +38,14 @@ def chunk_text(document: Document, max_tokens = 500, overlap = 100):
     chunks = []
     index = 0
     pages = reader.pages
-    
-    for i, page in enumerate(pages):
+    hasContent = True
+    for i, page in enumerate(pages): 
         animation.progress_bar(i, len(pages))
         text = page.extract_text()
-        if not text:
+        if not text or not text.strip():
+            hasContent = False
             continue
-
+        hasContent = True
         tokens = tokenise(text)
         start = 0
         
@@ -65,9 +66,13 @@ def chunk_text(document: Document, max_tokens = 500, overlap = 100):
             chunks.append(chunk)
             index += 1
             start += max_tokens - overlap
-    
+    if not hasContent:
+        sys.stdout.write(f"\nCouldn't read {document.name}\n")
+        sys.stdout.flush()
+        return []
     animation.progress_bar(100,100)
     sys.stdout.write("\n")
+    sys.stdout.flush()
     document.total_chunks = len(chunks)
     return chunks
 
@@ -87,7 +92,10 @@ def create_data(path):
             name=file,
             location=path
         )
-        doc.chunks = chunk_text(doc)
+        chunks = chunk_text(doc)
+        if not chunks:
+            continue
+        doc.chunks = chunks
         data.append(doc)
 
     save_metadata(data)
@@ -135,14 +143,10 @@ def clean_metadata(path, metadata_file="metadata.json"):
 
     data = load_metadata(metadata_file)
 
-    cleaned_data = [doc for doc in data if doc.name in current_files]
+    cleaned_data = [doc for doc in data if doc.name in current_files and doc.chunks]
 
     if len(cleaned_data) == len(data):
         return data
 
     save_metadata(cleaned_data, metadata_file)
     return cleaned_data
-
-
-
-    
