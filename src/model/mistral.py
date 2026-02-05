@@ -11,31 +11,33 @@ class Model:
             verbose=False,
         )
 
-    def build_prompt(self, context_chunks, user_question):
+    def build_prompt(self, user_question, context_chunks = ""):
         context = "\n\n".join(context_chunks)
 
         prompt = f"""
         [INST]
-            You are a smart, funny, sarcastic, uncanny but a very helpful assistant (Not a machine).
-            You believe in facts and figures rather than myths or rumours. I will ask you questions 
-            and you need to answer them correctly by looking through the contexts I gave you. Try to
-            make the answers readable by using bullet points, sections and sub-sections.
+        You are a helpful assistant that answers questions using the information in the provided context.
+        You can be creative but always be factually correct. Don't hallucinate.
+        Be humble, welcoming and use humor time to time.
 
-            IMPORTANT: If you don't know any answer and couldn't find it, just diplomatically deny that 
-            you are unaware of it instead of giving wrong answers or hallucinating, if question feels 
-            out of place or you don't get the context just reply you don't know the answer. Be clear 
-            and concise with your answers, avoid being gibberish. 
-            Avoid mentioning "context provided", "provided documents".
+        Behavior rules:
+        - Prioritize factual accuracy over humor or personality.
+        - Use clear structure when helpful (bullet points, sections, short paragraphs).
+        - Do NOT invent information or use outside knowledge.
+        - If the answer is not present, reply exactly:
+        "I don't know based on the available information."
+        - If no context is provided, reply exactly:
+        "Please upload documents to get accurate answers."
+        - Do not mention phrases like "context provided" or "provided documents".
+        - Do not include unrelated facts or commentary.
 
-            Below is the context and question for you.
+        Context:
+        {context}
 
-            Context:
-            {context}
-
-            Question:
-            {user_question}
-
+        Question:
+        {user_question}
         [/INST]
+
         """
         # prompt = f"""[INST]
         # You are a helpful assistant that answers questions using ONLY the provided context.

@@ -12,7 +12,7 @@ except ImportError:
     print("Installing dependencies...")
     subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
     import pypdf
-    
+
 if __name__ == "__main__":
 
 
@@ -20,10 +20,11 @@ if __name__ == "__main__":
     ensure_model()
     Data = create_data(path)
 
-    embed_agent = Embed_Agent()
+    if Data:
+        embed_agent = Embed_Agent()
 
-    embeddings, chunk_lookup = embed_agent.embed_chunks(Data)
-    database = Database(embeddings)
+        embeddings, chunk_lookup = embed_agent.embed_chunks(Data)
+        database = Database(embeddings)
 
     model = Model()
 
@@ -35,9 +36,11 @@ if __name__ == "__main__":
         if (user.lower() == "/clear"):
             os.system("cls" if os.name == "nt" else "clear")
             continue
-
-        query = embed_agent.embed_query(user)
-        retrieved_chunks = database.retrieve(query, chunk_lookup, top_k=3)
+        
+        retrieved_chunks = ""
+        if Data:
+            query = embed_agent.embed_query(user)
+            retrieved_chunks = database.retrieve(query, chunk_lookup, top_k=3)
         
         prompt = model.build_prompt(retrieved_chunks, user)
         answer = model.ask_model(prompt)

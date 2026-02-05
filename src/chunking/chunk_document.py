@@ -78,6 +78,12 @@ def chunk_text(document: Document, max_tokens = 500, overlap = 100):
 
 
 def create_data(path):
+    pdfs = [f for f in os.listdir(path) if f != 'upload_files_here.txt']
+    if not pdfs:
+        sys.stdout.write("No pdfs uploaded! Running model without knowledge base.\n")
+        sys.stdout.flush()
+        return None
+    
     data = clean_metadata(path)
     existing_files = {doc.name for doc in data}
 
@@ -99,7 +105,8 @@ def create_data(path):
         data.append(doc)
 
     save_metadata(data)
-    sys.stdout.write("\rMetadata was loaded successfully... ✅\n")
+    if pdfs:
+        sys.stdout.write("\rMetadata was loaded successfully... ✅\n")
     return data
 
 
