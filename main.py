@@ -5,8 +5,17 @@ from src.model.mistral import Model
 from models import ensure_model
 import sys
 import os
-
+import subprocess
+try:
+    import pypdf
+except ImportError:
+    print("Installing dependencies...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "-r", "requirements.txt"])
+    import pypdf
+    
 if __name__ == "__main__":
+
+
     path = "./data/raw"
     ensure_model()
     Data = create_data(path)
