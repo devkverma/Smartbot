@@ -1,6 +1,6 @@
 from sentence_transformers import SentenceTransformer
 
-class Model:
+class Embed_Agent:
 
     def __init__(self):
         self.model = SentenceTransformer("all-MiniLM-L6-v2")

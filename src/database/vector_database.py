@@ -9,8 +9,8 @@ class Database:
         self.index = faiss.IndexFlatL2(self.dim)
         self.index.add(embeddings)
 
-    def retrieve(self, query, chunk_lookup):
-        distance, indices = self.index.search(query, k=5)
+    def retrieve(self, query, chunk_lookup, top_k = 10):
+        distance, indices = self.index.search(query, k=top_k)
 
         return [chunk_lookup[i].text for i in indices[0]]
     
