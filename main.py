@@ -42,7 +42,7 @@ if __name__ == "__main__":
             query = embed_agent.embed_query(user)
             retrieved_chunks = database.retrieve(query, chunk_lookup, top_k=3)
         
-        prompt = model.build_prompt(retrieved_chunks, user)
+        prompt = model.build_prompt(user, retrieved_chunks)
         answer = model.ask_model(prompt)
 
     sys.stdout.write("Exiting program...")
